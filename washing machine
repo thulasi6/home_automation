@@ -1,0 +1,56 @@
+[{"id":"f843944b.416128","type":"inject","z":"a34f2e41.dd53a","name":"","topic":"tick","payload":"","payloadType":"date","repeat":"1","crontab":"",
+"once":false,"x":684.0003890991211,"y":856.0002117156982,"wires":
+[["caf8cadc.339188"]]},{"id":"2f8334f4.cefd7c","type":"ui_template","z":"a34f2e41.dd53a","group":"335f2e6.c0353d2","name":"Date Input","order":5,"width":0,"height":0,
+"format":"<input ng-model=\"me.item.value\" type=\"datetime-local\" style=\"z-index: 1;\" ng-change=\"send(me.item.value)\">","storeOutMessages":true,"fwdInMessages":true,
+"templateScope":"local","x":108.00011444091797,"y":692.3332109451294,"wiresdd53a","name":"reduce countdown","func":"context.countdown = context.countdown || 0;
+\ncontext.active = context.active || false;\nif(msg.topic === \"countdown\")\n context.countdown = msg.payload;\nif(msg.topic === \"active\")\n{\n context.active = msg.payload;
+\n if(context.active === false)\n {\n msg.topic = \"countdown\";\n msg.payload = \"\";\n return msg;\n }\n}\nif(msg.topic === \"tick\" && context.countdown > 0 && context.active)
+\n{\n context.countdown--;\n msg.topic = \"countdown\";\n msg.payload = context.countdown;\n return msg;\n}\n\n",
+"outputs":1,"noerr":0,"x":936.0005683898926,"y":696.6667890548706,"wires":[["79174afc.970154","dbc5c3f7.eca9d"]]},{"id":"79174afc.970154",
+"type":"ui_text","z":"a34f2e41.dd53a","group":"335f2e6.c0353d2","order":7,"width":0,"height":0,"name":"countdown","label":"Countdown","format":"{{msg.payload}}",
+"layout":"row-spread","x":1165.167091369629,"y":693.0002031326294,"wires":[]},{"id":"6b75c69.6340e38","type":"ui_switch","z":"a34f2e41.dd53a","name":"","label":"Enable timer",
+"group":"335f2e6.c0353d2","order":6,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"active","style":"","onvalue":"true","onvalueType":"bool","onicon":"",
+"oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":704.0003890991211,"y":392.0004291534424,"wires":[["caf8cadc.339188"]]},
+{"id":"8a9630f.59921d","type":"mqtt in","z":"a34f2e41.dd53a","name":"","topic":"washingMachine/led1","qos":"1","broker":"171132c7.ece67d","x":296.00003814697266,
+"y":190.00000286102295,"wires":[["78115f22.279f5","4c0a3616.308828"]]},{"id":"ab5c312e.bf284","type":"mqtt in","z":"a34f2e41.dd53a","name":"",
+"topic":"washingMachine/led2","qos":"1","broker":"171132c7.ece67d","x":300.0000762939453,"y":122.0000467300415,"wires":[["b42290a1.ff735"]]},
+{"id":"90b9212b.6f362","type":"mqtt in","z":"a34f2e41.dd53a","name":"","topic":"washingMachine/led3","qos":"1","broker":"171132c7.ece67d","x":304,"y":55.999990463256836,
+"wires":[["f0af90f3.07b05"]]},{"id":"9a10e690.6aa5c8","type":"ui_toast","z":"a34f2e41.dd53a","position":"top right","displayTime":"3","highlight":"","outputs":0,
+"ok":"OK","cancel":"","topic":"","name":"","x":1469.1669387817383,"y":301.00010108947754,"wires":[]},{"id":"3b5443db.cd543c","type":"ui_switch","z":"a34f2e41.dd53a",
+"name":"","label":"Notification","group":"335f2e6.c0353d2","order":8,"width":0,"height":0,"passthru":true,"decouple":"false","topic":"notify","style":"",
+"onvalue":"true","onvalueType":"bool","onicon":"","oncolor":"","offvalue":"false","offvalueType":"bool","officon":"","offcolor":"","x":961.1673889160156,
+"y":275.0000982284546,"wires":[["4c0a3616.308828"]]},{"id":"388da9d4.a45616","type":"ui_button","z":"a34f2e41.dd53a","name":"","group":"335f2e6.c0353d2",
+"order":4,"width":"3","height":"1","passthru":false,"label":"Start/Stop","color":"","bgcolor":"","icon":"","payload":"1","payloadType":"str","topic":"",
+"x":1189.1669158935547,"y":451.00014781951904,"wires":[["49a79c5c.2bcaa4","a745b111.d733b"]]},{"id":"a745b111.d733b","type":"mqtt out","z":"a34f2e41.dd53a",
+"name":"","topic":"washingMachine/servo","qos":"1","retain":"false","broker":"171132c7.ece67d","x":1469.1669387817383,"y":447.0001049041748,"wires":[]},
+{"id":"49a79c5c.2bcaa4","type":"function","z":"a34f2e41.dd53a","name":"Stop Countdown","func":"msg.topic = \"active\";\nmsg.payload = false;\nreturn msg;",
+"outputs":1,"noerr":0,"x":1463.1669311523438,"y":616.0001983642578,"wires":[["6b75c69.6340e38"]]},{"id":"dbc5c3f7.eca9d","type":"function","z":"a34f2e41.dd53a",
+"name":"start if countdown 0","func":"if(msg.payload === 0)\n{\n msg.payload = \"1\";\n return msg;\n}","outputs":1,"noerr":0,"x":1177.1669235229492,"y":618.0001974105835,
+"wires":[["49a79c5c.2bcaa4","a745b111.d733b"]]},{"id":"94ee0358.c8ccf","type":"ui_template","z":"a34f2e41.dd53a","group":"335f2e6.c0353d2","name":"door icon","order":1,
+"width":"1","height":"1","format":"","storeOutMessages":true,"fwdInMessages":true,"templateScope":"local","x":933.1667709350586,"y":57.00000762939453,"wires":[[]]},
+{"id":"f0af90f3.07b05","type":"function","z":"a34f2e41.dd53a","name":"state to lock html icon","func":"if(msg.payload === '0')\n msg.template = '<ui-icon icon=\"lock_open\">
+</ui-icon>';\nelse\n msg.template = '<ui-icon icon=\"lock\"></ui-icon>';\nreturn msg;","outputs":1,"noerr":0,"x":629.1669158935547,"y":56.666701316833496,
+"wires":[["94ee0358.c8ccf"]]},{"id":"b42290a1.ff735","type":"function","z":"a34f2e41.dd53a","name":"state to washing html icon","func":"if(msg.payload === '0')
+\n msg.template = '<ui-icon icon=\"crop_square\"></ui-icon>';\nelse\n msg.template = '<ui-icon icon=\"play_arrow\"></ui-icon>';\nreturn msg;","outputs":1,"noerr":0,
+"x":638.0000534057617,"y":118.00000667572021,"wires":[["b7fc71f2.9bc9"]]},{"id":"78115f22.279f5","type":"function","z":"a34f2e41.dd53a","name":"state to finished html icon",
+"func":"if(msg.payload === '0')\n msg.template = '<ui-icon icon=\"hourglass_empty\"></ui-icon>';\nelse\n msg.template = '<ui-icon icon=\"done_all\"></ui-icon>';\nreturn msg;
+","outputs":1,"noerr":0,"x":646.0000152587891,"y":193.99999904632568,"wires":[["192ad6d4.27c7e9"]]},{"id":"b7fc71f2.9bc9","type":"ui_template","z":"a34f2e41.dd53a",
+"group":"335f2e6.c0353d2","name":"washing icon","order":2,"width":"1","height":"1","format":"","storeOutMessages":true,"fwdInMessages":true,"templateScope":"local",
+"x":944.0001525878906,"y":120.00001621246338,"wires":[[]]},{"id":"192ad6d4.27c7e9","type":"ui_template","z":"a34f2e41.dd53a","group":"335f2e6.c0353d2","name":"finished icon",
+"order":3,"width":"1","height":"1","format":"","storeOutMessages":true,"fwdInMessages":true,"templateScope":"local","x":938.0000762939453,"y":194.00000858306885,"wires":[[]]},
+{"id":"56e691b9.db12c","type":"mqtt in","z":"a34f2e41.dd53a","name":"","topic":"washingMachine/servo","qos":"1","broker":"171132c7.ece67d","x":298.0000457763672,
+"y":266.00005435943604,"wires":[[]]},{"id":"4c0a3616.308828","type":"function","z":"a34f2e41.dd53a","name":"notify when finished",
+"func":"context.notifyMe = context.notifyMe || false;\nif(msg.topic === 'notify')\n context.notifyMe = msg.payload;\n 
+\nif(msg.topic === 'washingMachine/led1' && msg.payload === \"1\" && context.notifyMe)\n{\n msg.topic = 'notify';\n msg.payload = false;\n return msg;\n}\n",
+"outputs":1,"noerr":0,"x":972.0000762939453,"y":362.0000238418579,"wires":[["3b5443db.cd543c","5508cd9b.a96a54"]]},{"id":"5508cd9b.a96a54","type":"function",
+"z":"a34f2e41.dd53a","name":"notification message","func":"msg.topic = 'Washing Machine';\nmsg.payload = 'Finished washing!';\nreturn msg;","outputs":1,"noerr":0,
+"x":1239.1669235229492,"y":353.00010108947754,"wires":[["9a10e690.6aa5c8","91737052.620a"]]},{"id":"91737052.620a","type":"ui_audio","z":"a34f2e41.dd53a","name":"Audio",
+"group":"335f2e6.c0353d2","voice":"2","always":true,"x":1447.1667709350586,"y":385.3333959579468,"wires":[]},{"id":"b0cc132e.b3725","type":"function","z":"a34f2e41.dd53a",
+"name":"time string to millis","func":"var d = new Date(msg.payload); \nmsg.topic = \"teargetTimestamp\"\nmsg.payload = d.getTime();\nreturn msg;","outputs":1,"noerr":0,
+"x":454.00004959106445,"y":690.0000748634338,"wires":[["8ff136ff.0dd288"]]},{"id":"bf0f137c.1b8","type":"function","z":"a34f2e41.dd53a","name":"msg","func":"\nreturn 
+{topic: '', payload: msg};","outputs":1,"noerr":0,"x":275.9996910095215,"y":687.3332080841064,"wires":[["b0cc132e.b3725"]]},{"id":"8ff136ff.0dd288","type":"function",
+"z":"a34f2e41.dd53a","name":"set countdown in seconds","func":"msg.topic = \"countdown\";\nmsg.payload = Math.floor(((msg.payload - Date.now()) / 1000));\nreturn msg;",
+"outputs":1,"noerr":0,"x":683.9999656677246,"y":688.0000371932983,"wires":[["caf8cadc.339188"]]},{"id":"335f2e6.c0353d2","type":"ui_group","z":"","name":"Washing Machine",
+"tab":"d31f8864.3cea88","order":2,"disp":true,"width":"6"},{"id":"171132c7.ece67d","type":"mqtt-broker","z":"","broker":"localhost","port":"1883","clientid":"",
+"usetls":false,"compatmode":true,"keepalive":"60","cleansession":true,"willTopic":"","willQos":"0","willPayload":"","birthTopic":"","birthQos":"0","birthPayload":""},
+{"id":"d31f8864.3cea88","type":"ui_tab","z":"","name":"Washing Machine","icon":"dashboard","order":2}]
